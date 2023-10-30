@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_grpc_poc/domain/user.dart';
 import 'package:flutter_grpc_poc/repository/proto/service.pbgrpc.dart';
+import 'package:grpc/grpc.dart';
 
 import '../google/protobuf/timestamp.pb.dart';
 
@@ -38,10 +41,35 @@ class UserApiRepository {
     return createdUsers;
   }
 
-  Future<void> bulkLoadCreateUserClientStream({
-    stream = Stream<ApplicationUser>
+  Future<List<ApplicationUser>> bulkLoadCreateUserClientStream({
+    usersStreamController = StreamController<ApplicationUser>
   }) async {
-    _userServiceClient.bulkLoadClientStream(stream);
+    StreamController<User> createUserRequestStreamController = StreamController();
+    ResponseFuture<UserBulkLoadResponse> futureResponse =
+      _userServiceClient.bulkLoadClientStream(createUserRequestStreamController.stream);
+    while (!usersStreamController.isClosed) {
+      await for (ApplicationUser user in usersStreamController.stream) {
+        createUserRequestStreamController.add(User(
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: user.phone,
+            birthDate: Timestamp.fromDateTime(
+                user.birthDate ?? DateTime.fromMillisecondsSinceEpoch(0))
+        ));
+      }
+    }
+    createUserRequestStreamController.close();
+    List<ApplicationUser> createdUsers = List.empty(growable: true);
+    UserBulkLoadResponse response = await futureResponse;
+    for (CreatedUser user in response.createdUsers) {
+      createdUsers.add(
+          ApplicationUser.withIdAndUsername(
+              id: user.id.toInt(),
+              username: user.username));
+    }
+    return createdUsers;
   }
 
   Stream<ApplicationUser> bulkLoadCreateUserServerStream({

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_grpc_poc/domain/user.dart';
 import 'package:flutter_grpc_poc/repository/repository/user_api.dart';
 
@@ -17,5 +19,11 @@ class UserService {
     users = List<ApplicationUser>
   }) {
     return _userApiRepository.bulkLoadCreateUserServerStream(users: users);
+  }
+
+  Future<List<ApplicationUser>> bulkLoadCreateUsersClientStream({
+    usersStreamController = StreamController<ApplicationUser>
+  }) {
+    return _userApiRepository.bulkLoadCreateUserClientStream(usersStreamController: usersStreamController);
   }
 }

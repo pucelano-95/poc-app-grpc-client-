@@ -53,6 +53,12 @@ class _CreateUserUnaryState extends State<CreateUserUnaryScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const Text(
+          "Unary Demo",
+          style: TextStyle(
+              fontSize: 24.0
+          ),
+        ),
         CardDisplay(title: "Cached users", userCards: buildCachedCardList()),
         CardDisplay(
             title: "Saved in server users",

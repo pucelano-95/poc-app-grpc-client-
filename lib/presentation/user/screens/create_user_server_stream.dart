@@ -53,6 +53,12 @@ class _CreateUserServerStreamState extends State<CreateUserServerStreamScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const Text(
+          "Server Stream Demo",
+          style: TextStyle(
+              fontSize: 24.0
+          ),
+        ),
         CardDisplay(title: "Cached users", userCards: buildCachedCardList()),
         CardDisplay(
             title: "Saved in server users",
@@ -91,9 +97,9 @@ class _CreateUserServerStreamState extends State<CreateUserServerStreamScreen> {
             },
             onRandomBtnPressed: () {
               var rng = Random();
-              _state.username = "u ${rng.nextInt(10000)}";
-              _state.firstName = "fn ${rng.nextInt(10000)}";
-              _state.lastName = "ln ${rng.nextInt(10000)}";
+              _state.username = "u${rng.nextInt(10000)}";
+              _state.firstName = "fn${rng.nextInt(10000)}";
+              _state.lastName = "ln${rng.nextInt(10000)}";
               _state.email = "e${rng.nextInt(10000)}@email.com";
               _state.phone = "+3466${rng.nextInt(9)}112233";
               _state.birthDate = DateTime.now();

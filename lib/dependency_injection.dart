@@ -30,7 +30,7 @@ class DependencyInjection {
     CreateUserController createUserController = CreateUserController(userService);
     container.createUserUnaryScreen = CreateUserUnaryScreen(createUserController);
     container.createUserServerStreamScreen = CreateUserServerStreamScreen(createUserController);
-    container.createUserClientStreamScreen = const CreateUserClientStreamScreen();
+    container.createUserClientStreamScreen = CreateUserClientStreamScreen(createUserController);
     container.createUserBidirectionalScreen = const CreateUserBidirectionalScreen();
     return container;
   }
