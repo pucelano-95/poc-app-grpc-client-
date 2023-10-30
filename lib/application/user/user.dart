@@ -22,8 +22,14 @@ class UserService {
   }
 
   Future<List<ApplicationUser>> bulkLoadCreateUsersClientStream({
-    usersStreamController = StreamController<ApplicationUser>
+    usersStreamController = Stream<ApplicationUser>
   }) {
     return _userApiRepository.bulkLoadCreateUserClientStream(usersStreamController: usersStreamController);
+  }
+
+  Stream<ApplicationUser> bulkLoadCreateUsersBidirectionalStream({
+    usersStreamController = Stream<ApplicationUser>
+  }) {
+    return _userApiRepository.bulkLoadCreateUserBidirectionalStream(usersStreamController: usersStreamController);
   }
 }

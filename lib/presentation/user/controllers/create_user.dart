@@ -40,22 +40,28 @@ class CreateUserController {
   }
 
   Future<List<CreatedUsersResponse>> createUsersClientStream({
-    requestStreamController = StreamController<CreateUserState>
+    requestStreamController = Stream<CreateUserState>
   }) async {
-    StreamController<ApplicationUser> userToCreateStreamController = StreamController();
-    Future<List<ApplicationUser>> futureResponse =
-        _userService.bulkLoadCreateUsersClientStream(usersStreamController: userToCreateStreamController);
-    while (!requestStreamController.isClosed) {
-      await for (CreateUserState u in requestStreamController.stream) {
-        userToCreateStreamController.add(u.toUser());
-      }
-    }
-    userToCreateStreamController.close();
-    List<ApplicationUser> createdUsers = await futureResponse;
+    Stream<ApplicationUser> userToCreateStream = requestStreamController.asyncMap<ApplicationUser>((CreateUserState e) {
+      return e.toUser();
+    });
+    List<ApplicationUser> createdUsers =
+      await _userService.bulkLoadCreateUsersClientStream(usersStreamController: userToCreateStream);
     List<CreatedUsersResponse> response = List.empty(growable: true);
     for (ApplicationUser u in createdUsers) {
       response.add(CreatedUsersResponse(u.id, u.username));
     }
     return response;
+  }
+
+  Stream<CreatedUsersResponse> createUsersBidirectionalStream({
+    requestStreamController = Stream<CreateUserState>
+  }) async* {
+    Stream<ApplicationUser> userToCreateStream = requestStreamController.asyncMap<ApplicationUser>((CreateUserState e) {
+      return e.toUser();
+    });
+    await for (ApplicationUser createdUser in _userService.bulkLoadCreateUsersBidirectionalStream(usersStreamController: userToCreateStream)) {
+      yield CreatedUsersResponse(createdUser.id, createdUser.username);
+    }
   }
 }

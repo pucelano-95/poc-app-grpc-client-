@@ -42,27 +42,21 @@ class UserApiRepository {
   }
 
   Future<List<ApplicationUser>> bulkLoadCreateUserClientStream({
-    usersStreamController = StreamController<ApplicationUser>
+    usersStreamController = Stream<ApplicationUser>
   }) async {
-    StreamController<User> createUserRequestStreamController = StreamController();
-    ResponseFuture<UserBulkLoadResponse> futureResponse =
-      _userServiceClient.bulkLoadClientStream(createUserRequestStreamController.stream);
-    while (!usersStreamController.isClosed) {
-      await for (ApplicationUser user in usersStreamController.stream) {
-        createUserRequestStreamController.add(User(
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            phone: user.phone,
-            birthDate: Timestamp.fromDateTime(
-                user.birthDate ?? DateTime.fromMillisecondsSinceEpoch(0))
-        ));
-      }
-    }
-    createUserRequestStreamController.close();
+    Stream<User> userRequestStream = usersStreamController.asyncMap<User>((user) {
+      return User(
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          birthDate: Timestamp.fromDateTime(
+              user.birthDate ?? DateTime.fromMillisecondsSinceEpoch(0)));
+    });
+    UserBulkLoadResponse response =
+      await _userServiceClient.bulkLoadClientStream(userRequestStream);
     List<ApplicationUser> createdUsers = List.empty(growable: true);
-    UserBulkLoadResponse response = await futureResponse;
     for (CreatedUser user in response.createdUsers) {
       createdUsers.add(
           ApplicationUser.withIdAndUsername(
@@ -96,5 +90,27 @@ class UserApiRepository {
           username: createdUser.username);
       yield u;
     }
+  }
+
+  Stream<ApplicationUser> bulkLoadCreateUserBidirectionalStream({
+    usersStreamController = StreamController<ApplicationUser>
+  }) {
+    Stream<User> userRequestStream = usersStreamController.asyncMap<User>((user) {
+      return User(
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          birthDate: Timestamp.fromDateTime(
+              user.birthDate ?? DateTime.fromMillisecondsSinceEpoch(0)));
+    });
+    ResponseStream<CreatedUser> responseStream =
+      _userServiceClient.bulkLoadBidirectionalStream(userRequestStream);
+    return responseStream.asyncMap((event) {
+      return ApplicationUser.withIdAndUsername(
+          id: event.id.toInt(),
+          username: event.username);
+    });
   }
 }

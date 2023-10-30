@@ -45,14 +45,22 @@ class _CreateUserClientStreamState extends State<CreateUserClientStreamScreen> {
     initializeStream();
   }
 
-  void initializeStream() {
+  @override
+  void dispose() {
+    super.dispose();
+    _createUserStreamController.close();
+  }
+
+  Future<void> initializeStream() async {
     _createUserStreamController = StreamController();
     var futureCreatedUsers = widget._controller.createUsersClientStream(
-        requestStreamController: _createUserStreamController);
+        requestStreamController: _createUserStreamController.stream);
     futureCreatedUsers.then((value) {
-      setState(() {
-        _savedUsers.addAll(value);
-      });
+      if (value.isNotEmpty) {
+        setState(() {
+          _savedUsers.addAll(value);
+        });
+      }
     });
   }
 

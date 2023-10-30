@@ -12,7 +12,7 @@ class InjectionContainer {
   late CreateUserUnaryScreen createUserUnaryScreen;
   late CreateUserServerStreamScreen createUserServerStreamScreen;
   late CreateUserClientStreamScreen createUserClientStreamScreen;
-  late CreateUserBidirectionalScreen createUserBidirectionalScreen;
+  late CreateUserBidirectionalStreamScreen createUserBidirectionalScreen;
 }
 
 class DependencyInjection {
@@ -31,7 +31,7 @@ class DependencyInjection {
     container.createUserUnaryScreen = CreateUserUnaryScreen(createUserController);
     container.createUserServerStreamScreen = CreateUserServerStreamScreen(createUserController);
     container.createUserClientStreamScreen = CreateUserClientStreamScreen(createUserController);
-    container.createUserBidirectionalScreen = const CreateUserBidirectionalScreen();
+    container.createUserBidirectionalScreen = CreateUserBidirectionalStreamScreen(createUserController);
     return container;
   }
 }
