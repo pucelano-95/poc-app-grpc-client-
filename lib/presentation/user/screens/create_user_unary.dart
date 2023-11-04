@@ -28,6 +28,7 @@ class _CreateUserUnaryState extends State<CreateUserUnaryScreen> {
   List<CreateUserState> _usersPendingCreation = List.empty(growable: true);
   final List<CreatedUsersResponse> _savedUsers = List.empty(growable: true);
   int _timeDifference = 0;
+  int _sizeOfDataSent = 0;
 
   List<CacheUserCard> buildCachedCardList() {
     List<CacheUserCard> cards = List.empty(growable: true);
@@ -144,6 +145,7 @@ class _CreateUserUnaryState extends State<CreateUserUnaryScreen> {
                 _state = CreateUserState();
                 _formKey.currentState?.reset();
                 _timeDifference = 0;
+                _sizeOfDataSent = 0;
               });
             },
             onCacheUserPressed: () {
@@ -152,6 +154,7 @@ class _CreateUserUnaryState extends State<CreateUserUnaryScreen> {
                 _state = CreateUserState();
                 _formKey.currentState?.reset();
                 _timeDifference = 0;
+                _sizeOfDataSent = 0;
               });
             },
             onServerStorePressed: () async {
@@ -161,6 +164,10 @@ class _CreateUserUnaryState extends State<CreateUserUnaryScreen> {
               final endDateTime = DateTime.now();
               setState(() {
                 _savedUsers.addAll(response);
+                _sizeOfDataSent = _usersPendingCreation.fold(
+                    0,
+                    (int size, userState) =>
+                        size + userState.calculateSizeInBytes());
                 _usersPendingCreation = List.empty(growable: true);
                 _timeDifference = endDateTime.millisecondsSinceEpoch -
                     startDateTime.millisecondsSinceEpoch;
@@ -168,7 +175,8 @@ class _CreateUserUnaryState extends State<CreateUserUnaryScreen> {
             }),
         AlertTextField(
           title: 'Elapsed time for a GRPC unary call',
-          content: 'GRPC time in $_timeDifference ms',
+          content:
+              'GRPC time in $_timeDifference ms for $_sizeOfDataSent bytes',
         ),
       ],
     );
