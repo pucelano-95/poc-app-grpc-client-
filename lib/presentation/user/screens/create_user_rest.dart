@@ -1,35 +1,51 @@
-import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_grpc_poc/presentation/user/controllers/create_user.dart';
+import 'package:flutter_grpc_poc/presentation/user/state/create_user.dart';
+import 'package:flutter_grpc_poc/presentation/user/widgets/alert_text.dart';
+import 'package:flutter_grpc_poc/presentation/user/widgets/cache_user_card.dart';
+import 'package:flutter_grpc_poc/presentation/user/widgets/created_user_card.dart';
+import 'package:flutter_grpc_poc/presentation/user/widgets/user_card_display.dart';
+import 'package:flutter_grpc_poc/presentation/user/widgets/user_form.dart';
 
-import '../controllers/create_user.dart';
-import '../state/create_user.dart';
-import '../widgets/created_user_card.dart';
-import '../widgets/user_card_display.dart';
-import '../widgets/user_form.dart';
-
-class CreateUserBidirectionalStreamScreen extends StatefulWidget {
+class CreateUserRestScreen extends StatefulWidget {
   final CreateUserController _controller;
 
-  const CreateUserBidirectionalStreamScreen(
-    this._controller, {
-    super.key,
-  });
+  const CreateUserRestScreen(this._controller, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _CreateUserBidirectionalStreamState();
+    return _CreateUserRestState();
   }
 }
 
-class _CreateUserBidirectionalStreamState
-    extends State<CreateUserBidirectionalStreamScreen> {
+class _CreateUserRestState extends State<CreateUserRestScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final List<CreatedUsersResponse> _savedUsers = List.empty(growable: true);
   CreateUserState _state = CreateUserState();
-  late StreamController<CreateUserState> _createUserStreamController;
+  List<CreateUserState> _usersPendingCreation = List.empty(growable: true);
+  final List<CreatedUsersResponse> _savedUsers = List.empty(growable: true);
+  int _timeDifference = 0;
+
+  List<CacheUserCard> buildCachedCardList() {
+    List<CacheUserCard> cards = List.empty(growable: true);
+    for (CreateUserState u in _usersPendingCreation) {
+      cards.add(CacheUserCard(
+        u.username ?? "",
+        u.firstName ?? "",
+        u.lastName ?? "",
+        u.email ?? "",
+        u.phone ?? "",
+        u.birthDate.toString(),
+        u.country ?? "",
+        u.city ?? "",
+        u.state ?? "",
+        u.address ?? "",
+        u.postalCode ?? "",
+      ));
+    }
+    return cards;
+  }
 
   List<CreatedUserCard> buildSavedUserCardList() {
     List<CreatedUserCard> cards = List.empty(growable: true);
@@ -40,36 +56,14 @@ class _CreateUserBidirectionalStreamState
   }
 
   @override
-  void initState() {
-    super.initState();
-    initializeStream();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _createUserStreamController.close();
-  }
-
-  Future<void> initializeStream() async {
-    _createUserStreamController = StreamController<CreateUserState>();
-    await for (var u in widget._controller.createUsersBidirectionalStream(
-        requestStreamController: _createUserStreamController.stream)) {
-      setState(() {
-        _savedUsers.add(u);
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Text(
-          "Bidirectional Stream Demo",
+          "Rest Demo",
           style: TextStyle(fontSize: 24.0),
         ),
+        CardDisplay(title: "Cached users", userCards: buildCachedCardList()),
         CardDisplay(
             title: "Saved in server users",
             userCards: buildSavedUserCardList()),
@@ -143,18 +137,37 @@ class _CreateUserBidirectionalStreamState
               _state.state = "st ${rng.nextInt(10000)}";
               _state.address = "ad ${rng.nextInt(10000)}";
               _state.postalCode = "po ${rng.nextInt(10000)}";
-              _createUserStreamController.add(_state);
               setState(() {
+                _usersPendingCreation.add(_state);
                 _state = CreateUserState();
+                _formKey.currentState?.reset();
+                _timeDifference = 0;
               });
             },
             onCacheUserPressed: () {
-              _createUserStreamController.add(_state);
               setState(() {
+                _usersPendingCreation.add(_state);
                 _state = CreateUserState();
+                _formKey.currentState?.reset();
+                _timeDifference = 0;
               });
             },
-            onServerStorePressed: () async {}),
+            onServerStorePressed: () async {
+              final startDateTime = DateTime.now();
+              List<CreatedUsersResponse> response = await widget._controller
+                  .createUserRest(request: _usersPendingCreation);
+              final endDateTime = DateTime.now();
+              setState(() {
+                _savedUsers.addAll(response);
+                _usersPendingCreation = List.empty(growable: true);
+                _timeDifference = endDateTime.millisecondsSinceEpoch -
+                    startDateTime.millisecondsSinceEpoch;
+              });
+            }),
+        AlertTextField(
+          title: 'Elapsed time for a REST call',
+          content: 'REST time in $_timeDifference ms',
+        ),
       ],
     );
   }

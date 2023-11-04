@@ -12,10 +12,12 @@ import '../widgets/user_card_display.dart';
 import '../widgets/user_form.dart';
 
 class CreateUserClientStreamScreen extends StatefulWidget {
-
   final CreateUserController _controller;
 
-  const CreateUserClientStreamScreen(this._controller, {super.key, });
+  const CreateUserClientStreamScreen(
+    this._controller, {
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -24,7 +26,6 @@ class CreateUserClientStreamScreen extends StatefulWidget {
 }
 
 class _CreateUserClientStreamState extends State<CreateUserClientStreamScreen> {
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final List<CreatedUsersResponse> _savedUsers = List.empty(growable: true);
   List<CreateUserState> _cachedServerSentUsers = List.empty(growable: true);
@@ -68,12 +69,18 @@ class _CreateUserClientStreamState extends State<CreateUserClientStreamScreen> {
     List<CacheUserCard> cards = List.empty(growable: true);
     for (CreateUserState u in _cachedServerSentUsers) {
       cards.add(CacheUserCard(
-          u.username ?? "",
-          u.firstName ?? "",
-          u.lastName ?? "",
-          u.email ?? "",
-          u.phone ?? "",
-          u.birthDate.toString()));
+        u.username ?? "",
+        u.firstName ?? "",
+        u.lastName ?? "",
+        u.email ?? "",
+        u.phone ?? "",
+        u.birthDate.toString(),
+        u.country ?? "",
+        u.city ?? "",
+        u.state ?? "",
+        u.address ?? "",
+        u.postalCode ?? "",
+      ));
     }
     return cards;
   }
@@ -84,10 +91,8 @@ class _CreateUserClientStreamState extends State<CreateUserClientStreamScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Text(
-            "Client Stream Demo",
-            style: TextStyle(
-              fontSize: 24.0
-            ),
+          "Client Stream Demo",
+          style: TextStyle(fontSize: 24.0),
         ),
         CardDisplay(title: "Cached users", userCards: buildCachedCardList()),
         CardDisplay(
@@ -125,6 +130,31 @@ class _CreateUserClientStreamState extends State<CreateUserClientStreamScreen> {
                 _state.birthDate = DateTime.tryParse(v);
               });
             },
+            onCountryChanged: (v) {
+              setState(() {
+                _state.country = v;
+              });
+            },
+            onCityChanged: (v) {
+              setState(() {
+                _state.city = v;
+              });
+            },
+            onStateChanged: (v) {
+              setState(() {
+                _state.state = v;
+              });
+            },
+            onAddressChanged: (v) {
+              setState(() {
+                _state.address = v;
+              });
+            },
+            onPostalCodeChanged: (v) {
+              setState(() {
+                _state.postalCode = v;
+              });
+            },
             onRandomBtnPressed: () {
               var rng = Random();
               _state.username = "u ${rng.nextInt(10000)}";
@@ -133,6 +163,11 @@ class _CreateUserClientStreamState extends State<CreateUserClientStreamScreen> {
               _state.email = "e${rng.nextInt(10000)}@email.com";
               _state.phone = "+3466${rng.nextInt(9)}112233";
               _state.birthDate = DateTime.now();
+              _state.country = "co ${rng.nextInt(10000)}";
+              _state.city = "ci ${rng.nextInt(10000)}";
+              _state.state = "st ${rng.nextInt(10000)}";
+              _state.address = "ad ${rng.nextInt(10000)}";
+              _state.postalCode = "po ${rng.nextInt(10000)}";
               _createUserStreamController.add(_state);
               setState(() {
                 _cachedServerSentUsers.add(_state);
@@ -150,8 +185,7 @@ class _CreateUserClientStreamState extends State<CreateUserClientStreamScreen> {
               _createUserStreamController.close();
               _cachedServerSentUsers = List.empty(growable: true);
               initializeStream();
-            }
-        ),
+            }),
       ],
     );
   }

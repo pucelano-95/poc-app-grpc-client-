@@ -20,8 +20,7 @@ class Application extends StatelessWidget {
     return MaterialApp(
       title: 'gRPC PoC',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 86, 35, 95)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
       home: HomeScreen(title: 'gRPC PoC', container: container),

@@ -31,12 +31,18 @@ class _CreateUserServerStreamState extends State<CreateUserServerStreamScreen> {
     List<CacheUserCard> cards = List.empty(growable: true);
     for (CreateUserState u in _usersPendingCreation) {
       cards.add(CacheUserCard(
-          u.username ?? "",
-          u.firstName ?? "",
-          u.lastName ?? "",
-          u.email ?? "",
-          u.phone ?? "",
-          u.birthDate.toString()));
+        u.username ?? "",
+        u.firstName ?? "",
+        u.lastName ?? "",
+        u.email ?? "",
+        u.phone ?? "",
+        u.birthDate.toString(),
+        u.country ?? "",
+        u.city ?? "",
+        u.state ?? "",
+        u.address ?? "",
+        u.postalCode ?? "",
+      ));
     }
     return cards;
   }
@@ -55,9 +61,7 @@ class _CreateUserServerStreamState extends State<CreateUserServerStreamScreen> {
       children: [
         const Text(
           "Server Stream Demo",
-          style: TextStyle(
-              fontSize: 24.0
-          ),
+          style: TextStyle(fontSize: 24.0),
         ),
         CardDisplay(title: "Cached users", userCards: buildCachedCardList()),
         CardDisplay(
@@ -95,6 +99,31 @@ class _CreateUserServerStreamState extends State<CreateUserServerStreamScreen> {
                 _state.birthDate = DateTime.tryParse(v);
               });
             },
+            onCountryChanged: (v) {
+              setState(() {
+                _state.country = v;
+              });
+            },
+            onCityChanged: (v) {
+              setState(() {
+                _state.city = v;
+              });
+            },
+            onStateChanged: (v) {
+              setState(() {
+                _state.state = v;
+              });
+            },
+            onAddressChanged: (v) {
+              setState(() {
+                _state.address = v;
+              });
+            },
+            onPostalCodeChanged: (v) {
+              setState(() {
+                _state.postalCode = v;
+              });
+            },
             onRandomBtnPressed: () {
               var rng = Random();
               _state.username = "u${rng.nextInt(10000)}";
@@ -103,6 +132,11 @@ class _CreateUserServerStreamState extends State<CreateUserServerStreamScreen> {
               _state.email = "e${rng.nextInt(10000)}@email.com";
               _state.phone = "+3466${rng.nextInt(9)}112233";
               _state.birthDate = DateTime.now();
+              _state.country = "co ${rng.nextInt(10000)}";
+              _state.city = "ci ${rng.nextInt(10000)}";
+              _state.state = "st ${rng.nextInt(10000)}";
+              _state.address = "ad ${rng.nextInt(10000)}";
+              _state.postalCode = "po ${rng.nextInt(10000)}";
               setState(() {
                 _usersPendingCreation.add(_state);
                 _state = CreateUserState();
@@ -117,14 +151,14 @@ class _CreateUserServerStreamState extends State<CreateUserServerStreamScreen> {
               });
             },
             onServerStorePressed: () async {
-              await for (var u in widget._controller.createUsersServerStream(request: _usersPendingCreation)) {
+              await for (var u in widget._controller
+                  .createUsersServerStream(request: _usersPendingCreation)) {
                 setState(() {
                   _savedUsers.add(u);
                 });
               }
               _usersPendingCreation = List.empty(growable: true);
-            }
-        ),
+            }),
       ],
     );
   }
