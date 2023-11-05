@@ -3,11 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../controllers/create_user.dart';
 import '../state/create_user.dart';
-import '../widgets/created_user_card.dart';
-import '../widgets/user_card_display.dart';
 import '../widgets/user_form.dart';
 
 class CreateUserBidirectionalStreamScreen extends StatefulWidget {
@@ -27,21 +26,87 @@ class CreateUserBidirectionalStreamScreen extends StatefulWidget {
 class _CreateUserBidirectionalStreamState
     extends State<CreateUserBidirectionalStreamScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final List<CreatedUsersResponse> _savedUsers = List.empty(growable: true);
   CreateUserState _state = CreateUserState();
   late StreamController<CreateUserState> _createUserStreamController;
+  final List<PlutoRow> _savedUsers = List.empty(growable: true);
 
-  List<CreatedUserCard> buildSavedUserCardList() {
-    List<CreatedUserCard> cards = List.empty(growable: true);
-    for (CreatedUsersResponse u in _savedUsers) {
-      cards.add(CreatedUserCard(u.id ?? -1, u.username ?? ""));
-    }
-    return cards;
-  }
+  final List<PlutoColumn> columns = [];
+  final List<PlutoRow> rows = [];
+  late PlutoGridStateManager stateManager;
 
   @override
   void initState() {
     super.initState();
+    columns.addAll([
+      PlutoColumn(
+          title: 'ID', field: 'id', type: PlutoColumnType.number(), width: 60),
+      PlutoColumn(
+          title: 'Username',
+          field: 'username',
+          type: PlutoColumnType.text(),
+          width: 170),
+      PlutoColumn(
+          title: 'First Name',
+          field: 'firstName',
+          type: PlutoColumnType.text(),
+          width: 120),
+      PlutoColumn(
+          title: 'Last Name',
+          field: 'lastName',
+          type: PlutoColumnType.text(),
+          width: 120),
+      PlutoColumn(
+          title: 'Email',
+          field: 'email',
+          type: PlutoColumnType.text(),
+          width: 160),
+      PlutoColumn(
+          title: 'Phone',
+          field: 'phone',
+          type: PlutoColumnType.text(),
+          width: 130),
+      PlutoColumn(
+          title: 'Birth Date',
+          field: 'birthDate',
+          type: PlutoColumnType.date(),
+          width: 110),
+      PlutoColumn(
+          title: 'Country',
+          field: 'country',
+          type: PlutoColumnType.text(),
+          width: 70),
+      PlutoColumn(
+          title: 'City',
+          field: 'city',
+          type: PlutoColumnType.text(),
+          width: 80),
+      PlutoColumn(
+          title: 'State',
+          field: 'state',
+          type: PlutoColumnType.text(),
+          width: 80),
+      PlutoColumn(
+          title: 'Address',
+          field: 'address',
+          type: PlutoColumnType.text(),
+          width: 110),
+      PlutoColumn(
+          title: 'Postal code',
+          field: 'postalCode',
+          type: PlutoColumnType.text(),
+          width: 80),
+    ]);
+
+    fetchRows().then((fetchedRows) {
+      PlutoGridStateManager.initializeRowsAsync(
+        columns,
+        fetchedRows,
+      ).then((value) {
+        _savedUsers.addAll(value);
+        stateManager.refRows.addAll(value);
+        stateManager.setShowLoading(false);
+      });
+    });
     initializeStream();
   }
 
@@ -56,9 +121,20 @@ class _CreateUserBidirectionalStreamState
     await for (var u in widget._controller.createUsersBidirectionalStream(
         requestStreamController: _createUserStreamController.stream)) {
       setState(() {
-        _savedUsers.add(u);
+        _savedUsers.add(PlutoRow.fromJson(u.toJson()));
       });
+      stateManager.refRows.clear();
+      stateManager.refRows.addAll(_savedUsers);
+      stateManager.setShowLoading(false);
     }
+  }
+
+  Future<List<PlutoRow>> fetchRows() async {
+    final response = await widget._controller.getAllUsersUnary();
+    final fetchedRows = response.map<PlutoRow>((rowData) {
+      return PlutoRow.fromJson(rowData.toJson());
+    }).toList();
+    return Future.value(fetchedRows);
   }
 
   @override
@@ -70,91 +146,40 @@ class _CreateUserBidirectionalStreamState
           "Bidirectional Stream Demo",
           style: TextStyle(fontSize: 24.0),
         ),
-        CardDisplay(
-            title: "Saved in server users",
-            userCards: buildSavedUserCardList()),
+        SizedBox(
+          width: 2000.0, // Set a fixed width
+          height: 500.0, // Set a fixed height
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: PlutoGrid(
+              columns: columns,
+              rows: rows,
+              onLoaded: (PlutoGridOnLoadedEvent event) {
+                stateManager = event.stateManager;
+                stateManager.setShowLoading(false);
+              },
+              configuration: const PlutoGridConfiguration(),
+            ),
+          ),
+        ),
         CreateUserForm(
             formKey: _formKey,
-            onUsernameChanged: (v) {
-              setState(() {
-                _state.username = v;
-              });
-            },
-            onFirstNameChanged: (v) {
-              setState(() {
-                _state.firstName = v;
-              });
-            },
-            onLastNameChanged: (v) {
-              setState(() {
-                _state.lastName = v;
-              });
-            },
-            onEmailChanged: (v) {
-              setState(() {
-                _state.email = v;
-              });
-            },
-            onPhoneChanged: (v) {
-              setState(() {
-                _state.phone = v;
-              });
-            },
-            onBirthDateChanged: (v) {
-              setState(() {
-                _state.birthDate = DateTime.tryParse(v);
-              });
-            },
-            onCountryChanged: (v) {
-              setState(() {
-                _state.country = v;
-              });
-            },
-            onCityChanged: (v) {
-              setState(() {
-                _state.city = v;
-              });
-            },
-            onStateChanged: (v) {
-              setState(() {
-                _state.state = v;
-              });
-            },
-            onAddressChanged: (v) {
-              setState(() {
-                _state.address = v;
-              });
-            },
-            onPostalCodeChanged: (v) {
-              setState(() {
-                _state.postalCode = v;
-              });
-            },
-            onRandomBtnPressed: () {
+            onServerStoreRandomData: () async {
               var rng = Random();
-              _state.username = "u ${rng.nextInt(10000)}";
-              _state.firstName = "fn ${rng.nextInt(10000)}";
-              _state.lastName = "ln ${rng.nextInt(10000)}";
-              _state.email = "e${rng.nextInt(10000)}@email.com";
+              _state.username = "someUsername${rng.nextInt(10000)}";
+              _state.firstName = "firstName${rng.nextInt(10000)}";
+              _state.lastName = "lastName${rng.nextInt(10000)}";
+              _state.email = "user${rng.nextInt(10000)}@email.com";
               _state.phone = "+3466${rng.nextInt(9)}112233";
               _state.birthDate = DateTime.now();
-              _state.country = "co ${rng.nextInt(10000)}";
-              _state.city = "ci ${rng.nextInt(10000)}";
-              _state.state = "st ${rng.nextInt(10000)}";
-              _state.address = "ad ${rng.nextInt(10000)}";
-              _state.postalCode = "po ${rng.nextInt(10000)}";
+              _state.country = "Spain";
+              _state.city = "Madrid";
+              _state.state = "Madrid";
+              _state.address = "street${rng.nextInt(10000)}";
+              _state.postalCode = "${10000 + rng.nextInt(99999 - 10000)}";
               _createUserStreamController.add(_state);
-              setState(() {
-                _state = CreateUserState();
-              });
-            },
-            onCacheUserPressed: () {
-              _createUserStreamController.add(_state);
-              setState(() {
-                _state = CreateUserState();
-              });
-            },
-            onServerStorePressed: () async {}),
+              _state = CreateUserState();
+            }),
       ],
     );
   }

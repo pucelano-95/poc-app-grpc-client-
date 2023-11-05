@@ -21,10 +21,18 @@ export 'service.pb.dart';
 
 @$pb.GrpcServiceName('com.drathveloper.grpc.UserService')
 class UserServiceClient extends $grpc.Client {
+  static final _$getAllUsers = $grpc.ClientMethod<$0.EmptyRequest, $0.UserBulkLoadResponse>(
+      '/com.drathveloper.grpc.UserService/getAllUsers',
+      ($0.EmptyRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.UserBulkLoadResponse.fromBuffer(value));
   static final _$bulkLoad = $grpc.ClientMethod<$0.UserBulkLoadRequest, $0.UserBulkLoadResponse>(
       '/com.drathveloper.grpc.UserService/bulkLoad',
       ($0.UserBulkLoadRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.UserBulkLoadResponse.fromBuffer(value));
+  static final _$getAllUsersServerStream = $grpc.ClientMethod<$0.EmptyRequest, $0.CreatedUser>(
+      '/com.drathveloper.grpc.UserService/getAllUsersServerStream',
+      ($0.EmptyRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.CreatedUser.fromBuffer(value));
   static final _$bulkLoadServerStream = $grpc.ClientMethod<$0.UserBulkLoadRequest, $0.CreatedUser>(
       '/com.drathveloper.grpc.UserService/bulkLoadServerStream',
       ($0.UserBulkLoadRequest value) => value.writeToBuffer(),
@@ -44,8 +52,16 @@ class UserServiceClient extends $grpc.Client {
       : super(channel, options: options,
         interceptors: interceptors);
 
+  $grpc.ResponseFuture<$0.UserBulkLoadResponse> getAllUsers($0.EmptyRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$getAllUsers, request, options: options);
+  }
+
   $grpc.ResponseFuture<$0.UserBulkLoadResponse> bulkLoad($0.UserBulkLoadRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$bulkLoad, request, options: options);
+  }
+
+  $grpc.ResponseStream<$0.CreatedUser> getAllUsersServerStream($0.EmptyRequest request, {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$getAllUsersServerStream, $async.Stream.fromIterable([request]), options: options);
   }
 
   $grpc.ResponseStream<$0.CreatedUser> bulkLoadServerStream($0.UserBulkLoadRequest request, {$grpc.CallOptions? options}) {
@@ -66,6 +82,13 @@ abstract class UserServiceBase extends $grpc.Service {
   $core.String get $name => 'com.drathveloper.grpc.UserService';
 
   UserServiceBase() {
+    $addMethod($grpc.ServiceMethod<$0.EmptyRequest, $0.UserBulkLoadResponse>(
+        'getAllUsers',
+        getAllUsers_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.EmptyRequest.fromBuffer(value),
+        ($0.UserBulkLoadResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UserBulkLoadRequest, $0.UserBulkLoadResponse>(
         'bulkLoad',
         bulkLoad_Pre,
@@ -73,6 +96,13 @@ abstract class UserServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.UserBulkLoadRequest.fromBuffer(value),
         ($0.UserBulkLoadResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.EmptyRequest, $0.CreatedUser>(
+        'getAllUsersServerStream',
+        getAllUsersServerStream_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) => $0.EmptyRequest.fromBuffer(value),
+        ($0.CreatedUser value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UserBulkLoadRequest, $0.CreatedUser>(
         'bulkLoadServerStream',
         bulkLoadServerStream_Pre,
@@ -96,15 +126,25 @@ abstract class UserServiceBase extends $grpc.Service {
         ($0.CreatedUser value) => value.writeToBuffer()));
   }
 
+  $async.Future<$0.UserBulkLoadResponse> getAllUsers_Pre($grpc.ServiceCall call, $async.Future<$0.EmptyRequest> request) async {
+    return getAllUsers(call, await request);
+  }
+
   $async.Future<$0.UserBulkLoadResponse> bulkLoad_Pre($grpc.ServiceCall call, $async.Future<$0.UserBulkLoadRequest> request) async {
     return bulkLoad(call, await request);
+  }
+
+  $async.Stream<$0.CreatedUser> getAllUsersServerStream_Pre($grpc.ServiceCall call, $async.Future<$0.EmptyRequest> request) async* {
+    yield* getAllUsersServerStream(call, await request);
   }
 
   $async.Stream<$0.CreatedUser> bulkLoadServerStream_Pre($grpc.ServiceCall call, $async.Future<$0.UserBulkLoadRequest> request) async* {
     yield* bulkLoadServerStream(call, await request);
   }
 
+  $async.Future<$0.UserBulkLoadResponse> getAllUsers($grpc.ServiceCall call, $0.EmptyRequest request);
   $async.Future<$0.UserBulkLoadResponse> bulkLoad($grpc.ServiceCall call, $0.UserBulkLoadRequest request);
+  $async.Stream<$0.CreatedUser> getAllUsersServerStream($grpc.ServiceCall call, $0.EmptyRequest request);
   $async.Stream<$0.CreatedUser> bulkLoadServerStream($grpc.ServiceCall call, $0.UserBulkLoadRequest request);
   $async.Future<$0.UserBulkLoadResponse> bulkLoadClientStream($grpc.ServiceCall call, $async.Stream<$0.User> request);
   $async.Stream<$0.CreatedUser> bulkLoadBidirectionalStream($grpc.ServiceCall call, $async.Stream<$0.User> request);

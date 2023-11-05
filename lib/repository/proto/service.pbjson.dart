@@ -59,13 +59,28 @@ const CreatedUser$json = {
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 3, '10': 'id'},
     {'1': 'username', '3': 2, '4': 1, '5': 9, '10': 'username'},
+    {'1': 'firstName', '3': 3, '4': 1, '5': 9, '10': 'firstName'},
+    {'1': 'lastName', '3': 4, '4': 1, '5': 9, '10': 'lastName'},
+    {'1': 'email', '3': 5, '4': 1, '5': 9, '10': 'email'},
+    {'1': 'phone', '3': 6, '4': 1, '5': 9, '10': 'phone'},
+    {'1': 'birthDate', '3': 7, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'birthDate'},
+    {'1': 'country', '3': 8, '4': 1, '5': 9, '10': 'country'},
+    {'1': 'city', '3': 9, '4': 1, '5': 9, '10': 'city'},
+    {'1': 'state', '3': 10, '4': 1, '5': 9, '10': 'state'},
+    {'1': 'address', '3': 11, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'postalCode', '3': 12, '4': 1, '5': 9, '10': 'postalCode'},
   ],
 };
 
 /// Descriptor for `CreatedUser`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createdUserDescriptor = $convert.base64Decode(
     'CgtDcmVhdGVkVXNlchIOCgJpZBgBIAEoA1ICaWQSGgoIdXNlcm5hbWUYAiABKAlSCHVzZXJuYW'
-    '1l');
+    '1lEhwKCWZpcnN0TmFtZRgDIAEoCVIJZmlyc3ROYW1lEhoKCGxhc3ROYW1lGAQgASgJUghsYXN0'
+    'TmFtZRIUCgVlbWFpbBgFIAEoCVIFZW1haWwSFAoFcGhvbmUYBiABKAlSBXBob25lEjgKCWJpcn'
+    'RoRGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWJpcnRoRGF0ZRIYCgdj'
+    'b3VudHJ5GAggASgJUgdjb3VudHJ5EhIKBGNpdHkYCSABKAlSBGNpdHkSFAoFc3RhdGUYCiABKA'
+    'lSBXN0YXRlEhgKB2FkZHJlc3MYCyABKAlSB2FkZHJlc3MSHgoKcG9zdGFsQ29kZRgMIAEoCVIK'
+    'cG9zdGFsQ29kZQ==');
 
 @$core.Deprecated('Use userBulkLoadRequestDescriptor instead')
 const UserBulkLoadRequest$json = {
@@ -92,4 +107,13 @@ const UserBulkLoadResponse$json = {
 final $typed_data.Uint8List userBulkLoadResponseDescriptor = $convert.base64Decode(
     'ChRVc2VyQnVsa0xvYWRSZXNwb25zZRJGCgxjcmVhdGVkVXNlcnMYASADKAsyIi5jb20uZHJhdG'
     'h2ZWxvcGVyLmdycGMuQ3JlYXRlZFVzZXJSDGNyZWF0ZWRVc2Vycw==');
+
+@$core.Deprecated('Use emptyRequestDescriptor instead')
+const EmptyRequest$json = {
+  '1': 'EmptyRequest',
+};
+
+/// Descriptor for `EmptyRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List emptyRequestDescriptor = $convert.base64Decode(
+    'CgxFbXB0eVJlcXVlc3Q=');
 

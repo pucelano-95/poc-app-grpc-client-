@@ -264,6 +264,16 @@ class CreatedUser extends $pb.GeneratedMessage {
   factory CreatedUser({
     $fixnum.Int64? id,
     $core.String? username,
+    $core.String? firstName,
+    $core.String? lastName,
+    $core.String? email,
+    $core.String? phone,
+    $1.Timestamp? birthDate,
+    $core.String? country,
+    $core.String? city,
+    $core.String? state,
+    $core.String? address,
+    $core.String? postalCode,
   }) {
     final $result = create();
     if (id != null) {
@@ -271,6 +281,36 @@ class CreatedUser extends $pb.GeneratedMessage {
     }
     if (username != null) {
       $result.username = username;
+    }
+    if (firstName != null) {
+      $result.firstName = firstName;
+    }
+    if (lastName != null) {
+      $result.lastName = lastName;
+    }
+    if (email != null) {
+      $result.email = email;
+    }
+    if (phone != null) {
+      $result.phone = phone;
+    }
+    if (birthDate != null) {
+      $result.birthDate = birthDate;
+    }
+    if (country != null) {
+      $result.country = country;
+    }
+    if (city != null) {
+      $result.city = city;
+    }
+    if (state != null) {
+      $result.state = state;
+    }
+    if (address != null) {
+      $result.address = address;
+    }
+    if (postalCode != null) {
+      $result.postalCode = postalCode;
     }
     return $result;
   }
@@ -281,6 +321,16 @@ class CreatedUser extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CreatedUser', package: const $pb.PackageName(_omitMessageNames ? '' : 'com.drathveloper.grpc'), createEmptyInstance: create)
     ..aInt64(1, _omitFieldNames ? '' : 'id')
     ..aOS(2, _omitFieldNames ? '' : 'username')
+    ..aOS(3, _omitFieldNames ? '' : 'firstName', protoName: 'firstName')
+    ..aOS(4, _omitFieldNames ? '' : 'lastName', protoName: 'lastName')
+    ..aOS(5, _omitFieldNames ? '' : 'email')
+    ..aOS(6, _omitFieldNames ? '' : 'phone')
+    ..aOM<$1.Timestamp>(7, _omitFieldNames ? '' : 'birthDate', protoName: 'birthDate', subBuilder: $1.Timestamp.create)
+    ..aOS(8, _omitFieldNames ? '' : 'country')
+    ..aOS(9, _omitFieldNames ? '' : 'city')
+    ..aOS(10, _omitFieldNames ? '' : 'state')
+    ..aOS(11, _omitFieldNames ? '' : 'address')
+    ..aOS(12, _omitFieldNames ? '' : 'postalCode', protoName: 'postalCode')
     ..hasRequiredFields = false
   ;
 
@@ -322,6 +372,98 @@ class CreatedUser extends $pb.GeneratedMessage {
   $core.bool hasUsername() => $_has(1);
   @$pb.TagNumber(2)
   void clearUsername() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get firstName => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set firstName($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasFirstName() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearFirstName() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get lastName => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set lastName($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasLastName() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearLastName() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get email => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set email($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasEmail() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearEmail() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get phone => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set phone($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasPhone() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearPhone() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $1.Timestamp get birthDate => $_getN(6);
+  @$pb.TagNumber(7)
+  set birthDate($1.Timestamp v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasBirthDate() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearBirthDate() => clearField(7);
+  @$pb.TagNumber(7)
+  $1.Timestamp ensureBirthDate() => $_ensure(6);
+
+  @$pb.TagNumber(8)
+  $core.String get country => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set country($core.String v) { $_setString(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasCountry() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearCountry() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.String get city => $_getSZ(8);
+  @$pb.TagNumber(9)
+  set city($core.String v) { $_setString(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasCity() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearCity() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.String get state => $_getSZ(9);
+  @$pb.TagNumber(10)
+  set state($core.String v) { $_setString(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasState() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearState() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.String get address => $_getSZ(10);
+  @$pb.TagNumber(11)
+  set address($core.String v) { $_setString(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasAddress() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearAddress() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.String get postalCode => $_getSZ(11);
+  @$pb.TagNumber(12)
+  set postalCode($core.String v) { $_setString(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasPostalCode() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearPostalCode() => clearField(12);
 }
 
 class UserBulkLoadRequest extends $pb.GeneratedMessage {
@@ -410,6 +552,38 @@ class UserBulkLoadResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<CreatedUser> get createdUsers => $_getList(0);
+}
+
+class EmptyRequest extends $pb.GeneratedMessage {
+  factory EmptyRequest() => create();
+  EmptyRequest._() : super();
+  factory EmptyRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory EmptyRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'EmptyRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'com.drathveloper.grpc'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  EmptyRequest clone() => EmptyRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  EmptyRequest copyWith(void Function(EmptyRequest) updates) => super.copyWith((message) => updates(message as EmptyRequest)) as EmptyRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static EmptyRequest create() => EmptyRequest._();
+  EmptyRequest createEmptyInstance() => create();
+  static $pb.PbList<EmptyRequest> createRepeated() => $pb.PbList<EmptyRequest>();
+  @$core.pragma('dart2js:noInline')
+  static EmptyRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<EmptyRequest>(create);
+  static EmptyRequest? _defaultInstance;
 }
 
 

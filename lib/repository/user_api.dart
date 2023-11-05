@@ -8,12 +8,50 @@ import 'package:flutter_grpc_poc/repository/proto/service.pbgrpc.dart';
 import 'package:grpc/grpc.dart';
 import 'package:http/http.dart' as http;
 
-import '../google/protobuf/timestamp.pb.dart';
+import 'google/protobuf/timestamp.pb.dart';
 
 class UserApiRepository {
   UserApiRepository(this._userServiceClient);
 
   final UserServiceClient _userServiceClient;
+
+  Future<List<ApplicationUser>> bulkLoadGetUsersRest() async {
+    final http.Response httpResponse = await http.get(
+      Uri.http('localhost:8000', 'users'),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
+      },
+    );
+    List<UsersResponse> getUsersResponse = List.empty(growable: true);
+    if (httpResponse.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(httpResponse.body);
+      var usersResponseBody = List<UsersResponse>.from(responseData["users"]
+          .map((userJson) => UsersResponse.fromJson(userJson)));
+      getUsersResponse.addAll(usersResponseBody);
+    } else {
+      throw Exception(
+          'Failed to make POST REST call: ${httpResponse.statusCode}');
+    }
+    List<ApplicationUser> createdUsers = List.empty(growable: true);
+    for (UsersResponse user in getUsersResponse) {
+      createdUsers.add(ApplicationUser(
+          id: user.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          birthDate: user.birthDate,
+          country: user.country,
+          city: user.city,
+          state: user.state,
+          address: user.address,
+          postalCode: user.postalCode));
+    }
+    return createdUsers;
+  }
 
   Future<List<ApplicationUser>> bulkLoadCreateUserRest(
       {users = List<ApplicationUser>}) async {
@@ -45,22 +83,54 @@ class UserApiRepository {
       },
       body: body,
     );
-    List<CreatedUsersResponse> createdUsersResponse =
-        List.empty(growable: true);
+    List<UsersResponse> createdUsersResponse = List.empty(growable: true);
     if (httpResponse.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(httpResponse.body);
-      var createdUsersResponseBody = List<CreatedUsersResponse>.from(
+      var createdUsersResponseBody = List<UsersResponse>.from(
           responseData["createdUsers"]
-              .map((userJson) => CreatedUsersResponse.fromJson(userJson)));
+              .map((userJson) => UsersResponse.fromJson(userJson)));
       createdUsersResponse.addAll(createdUsersResponseBody);
     } else {
       throw Exception(
           'Failed to make POST REST call: ${httpResponse.statusCode}');
     }
     List<ApplicationUser> createdUsers = List.empty(growable: true);
-    for (CreatedUsersResponse user in createdUsersResponse) {
-      createdUsers.add(ApplicationUser.withIdAndUsername(
-          id: user.id, username: user.username));
+    for (UsersResponse user in createdUsersResponse) {
+      createdUsers.add(ApplicationUser(
+          id: user.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          birthDate: user.birthDate,
+          country: user.country,
+          city: user.city,
+          state: user.state,
+          address: user.address,
+          postalCode: user.postalCode));
+    }
+    return createdUsers;
+  }
+
+  Future<List<ApplicationUser>> getAllUsersUnary() async {
+    var response = await _userServiceClient.getAllUsers(EmptyRequest());
+    List<ApplicationUser> createdUsers = List.empty(growable: true);
+    for (CreatedUser user in response.createdUsers) {
+      createdUsers.add(ApplicationUser(
+          id: user.id.toInt(),
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          birthDate: DateTime.fromMillisecondsSinceEpoch(
+              user.birthDate.nanos ~/ 1000000),
+          country: user.country,
+          city: user.city,
+          state: user.state,
+          address: user.address,
+          postalCode: user.postalCode));
     }
     return createdUsers;
   }
@@ -88,8 +158,20 @@ class UserApiRepository {
     var response = await _userServiceClient.bulkLoad(request);
     List<ApplicationUser> createdUsers = List.empty(growable: true);
     for (CreatedUser user in response.createdUsers) {
-      createdUsers.add(ApplicationUser.withIdAndUsername(
-          id: user.id.toInt(), username: user.username));
+      createdUsers.add(ApplicationUser(
+          id: user.id.toInt(),
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          birthDate: DateTime.fromMillisecondsSinceEpoch(
+              user.birthDate.nanos ~/ 1000000),
+          country: user.country,
+          city: user.city,
+          state: user.state,
+          address: user.address,
+          postalCode: user.postalCode));
     }
     return createdUsers;
   }
@@ -117,10 +199,43 @@ class UserApiRepository {
         await _userServiceClient.bulkLoadClientStream(userRequestStream);
     List<ApplicationUser> createdUsers = List.empty(growable: true);
     for (CreatedUser user in response.createdUsers) {
-      createdUsers.add(ApplicationUser.withIdAndUsername(
-          id: user.id.toInt(), username: user.username));
+      createdUsers.add(ApplicationUser(
+          id: user.id.toInt(),
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          birthDate: DateTime.fromMillisecondsSinceEpoch(
+              user.birthDate.nanos ~/ 1000000),
+          country: user.country,
+          city: user.city,
+          state: user.state,
+          address: user.address,
+          postalCode: user.postalCode));
     }
     return createdUsers;
+  }
+
+  Stream<ApplicationUser> getAllUsersServerStream() async* {
+    await for (var createdUser
+        in _userServiceClient.getAllUsersServerStream(EmptyRequest())) {
+      ApplicationUser u = ApplicationUser(
+          id: createdUser.id.toInt(),
+          username: createdUser.username,
+          firstName: createdUser.firstName,
+          lastName: createdUser.lastName,
+          email: createdUser.email,
+          phone: createdUser.phone,
+          birthDate: DateTime.fromMillisecondsSinceEpoch(
+              createdUser.birthDate.nanos ~/ 1000000),
+          country: createdUser.country,
+          city: createdUser.city,
+          state: createdUser.state,
+          address: createdUser.address,
+          postalCode: createdUser.postalCode);
+      yield u;
+    }
   }
 
   Stream<ApplicationUser> bulkLoadCreateUserServerStream({
@@ -146,14 +261,26 @@ class UserApiRepository {
     var request = UserBulkLoadRequest(users: bulkLoadUsers);
     await for (var createdUser
         in _userServiceClient.bulkLoadServerStream(request)) {
-      ApplicationUser u = ApplicationUser.withIdAndUsername(
-          id: createdUser.id.toInt(), username: createdUser.username);
+      ApplicationUser u = ApplicationUser(
+          id: createdUser.id.toInt(),
+          username: createdUser.username,
+          firstName: createdUser.firstName,
+          lastName: createdUser.lastName,
+          email: createdUser.email,
+          phone: createdUser.phone,
+          birthDate: DateTime.fromMillisecondsSinceEpoch(
+              createdUser.birthDate.nanos ~/ 1000000),
+          country: createdUser.country,
+          city: createdUser.city,
+          state: createdUser.state,
+          address: createdUser.address,
+          postalCode: createdUser.postalCode);
       yield u;
     }
   }
 
   Stream<ApplicationUser> bulkLoadCreateUserBidirectionalStream(
-      {usersStreamController = StreamController<ApplicationUser>}) {
+      {usersStreamController = Stream<ApplicationUser>}) {
     Stream<User> userRequestStream =
         usersStreamController.asyncMap<User>((user) {
       return User(
@@ -174,8 +301,20 @@ class UserApiRepository {
     ResponseStream<CreatedUser> responseStream =
         _userServiceClient.bulkLoadBidirectionalStream(userRequestStream);
     return responseStream.asyncMap((event) {
-      return ApplicationUser.withIdAndUsername(
-          id: event.id.toInt(), username: event.username);
+      return ApplicationUser(
+          id: event.id.toInt(),
+          username: event.username,
+          firstName: event.firstName,
+          lastName: event.lastName,
+          email: event.email,
+          phone: event.phone,
+          birthDate: DateTime.fromMillisecondsSinceEpoch(
+              event.birthDate.nanos ~/ 1000000),
+          country: event.country,
+          city: event.city,
+          state: event.state,
+          address: event.address,
+          postalCode: event.postalCode);
     });
   }
 }

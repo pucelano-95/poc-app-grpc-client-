@@ -6,7 +6,7 @@ import 'package:flutter_grpc_poc/presentation/user/screens/create_user_rest.dart
 import 'package:flutter_grpc_poc/presentation/user/screens/create_user_server_stream.dart';
 import 'package:flutter_grpc_poc/presentation/user/screens/create_user_unary.dart';
 import 'package:flutter_grpc_poc/repository/proto/service.pbgrpc.dart';
-import 'package:flutter_grpc_poc/repository/repository/user_api.dart';
+import 'package:flutter_grpc_poc/repository/user_api.dart';
 import 'package:grpc/grpc.dart';
 
 class InjectionContainer {

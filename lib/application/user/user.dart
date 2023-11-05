@@ -1,21 +1,34 @@
 import 'dart:async';
 
 import 'package:flutter_grpc_poc/domain/user.dart';
-import 'package:flutter_grpc_poc/repository/repository/user_api.dart';
+import 'package:flutter_grpc_poc/repository/user_api.dart';
 
 class UserService {
   UserService(this._userApiRepository);
 
   final UserApiRepository _userApiRepository;
 
+  Future<List<ApplicationUser>> bulkLoadGetUsersRest() {
+    return _userApiRepository.bulkLoadGetUsersRest();
+  }
+
   Future<List<ApplicationUser>> bulkLoadCreateUsersRest(
       {users = List<ApplicationUser>}) {
     return _userApiRepository.bulkLoadCreateUserRest(users: users);
   }
 
+  Future<List<ApplicationUser>> getAllUsersUnary(
+      {users = List<ApplicationUser>}) {
+    return _userApiRepository.getAllUsersUnary();
+  }
+
   Future<List<ApplicationUser>> bulkLoadCreateUsersUnary(
       {users = List<ApplicationUser>}) {
     return _userApiRepository.bulkLoadCreateUserUnary(users: users);
+  }
+
+  Stream<ApplicationUser> getAllUsersServerStream() {
+    return _userApiRepository.getAllUsersServerStream();
   }
 
   Stream<ApplicationUser> bulkLoadCreateUsersServerStream(

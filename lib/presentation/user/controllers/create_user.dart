@@ -10,7 +10,29 @@ class CreateUserController {
 
   final UserService _userService;
 
-  Future<List<CreatedUsersResponse>> createUserRest(
+  Future<List<UsersResponse>> getUserRest() async {
+    List<ApplicationUser> createdUsers =
+        await _userService.bulkLoadGetUsersRest();
+    List<UsersResponse> response = List.empty(growable: true);
+    for (ApplicationUser u in createdUsers) {
+      response.add(UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode));
+    }
+    return response;
+  }
+
+  Future<List<UsersResponse>> createUserRest(
       {request = List<CreateUserState>}) async {
     List<ApplicationUser> users = List.empty(growable: true);
     for (CreateUserState requestItem in request) {
@@ -18,14 +40,47 @@ class CreateUserController {
     }
     List<ApplicationUser> createdUsers =
         await _userService.bulkLoadCreateUsersRest(users: users);
-    List<CreatedUsersResponse> response = List.empty(growable: true);
+    List<UsersResponse> response = List.empty(growable: true);
     for (ApplicationUser u in createdUsers) {
-      response.add(CreatedUsersResponse(u.id, u.username));
+      response.add(UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode));
     }
     return response;
   }
 
-  Future<List<CreatedUsersResponse>> createUserUnary(
+  Future<List<UsersResponse>> getAllUsersUnary() async {
+    List<ApplicationUser> users = await _userService.getAllUsersUnary();
+    List<UsersResponse> response = List.empty(growable: true);
+    for (ApplicationUser u in users) {
+      response.add(UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode));
+    }
+    return response;
+  }
+
+  Future<List<UsersResponse>> createUserUnary(
       {request = List<CreateUserState>}) async {
     List<ApplicationUser> users = List.empty(growable: true);
     for (CreateUserState requestItem in request) {
@@ -33,26 +88,68 @@ class CreateUserController {
     }
     List<ApplicationUser> createdUsers =
         await _userService.bulkLoadCreateUsersUnary(users: users);
-    List<CreatedUsersResponse> response = List.empty(growable: true);
+    List<UsersResponse> response = List.empty(growable: true);
     for (ApplicationUser u in createdUsers) {
-      response.add(CreatedUsersResponse(u.id, u.username));
+      response.add(UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode));
     }
     return response;
   }
 
-  Stream<CreatedUsersResponse> createUsersServerStream(
+  Stream<UsersResponse> getAllUsersServerStream() async* {
+    await for (ApplicationUser u in _userService.getAllUsersServerStream()) {
+      yield UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode);
+    }
+  }
+
+  Stream<UsersResponse> createUsersServerStream(
       {request = List<CreateUserState>}) async* {
     List<ApplicationUser> users = List.empty(growable: true);
     for (CreateUserState requestItem in request) {
       users.add(requestItem.toUser());
     }
-    await for (ApplicationUser createdUser
+    await for (ApplicationUser u
         in _userService.bulkLoadCreateUsersServerStream(users: users)) {
-      yield CreatedUsersResponse(createdUser.id, createdUser.username);
+      yield UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode);
     }
   }
 
-  Future<List<CreatedUsersResponse>> createUsersClientStream(
+  Future<List<UsersResponse>> createUsersClientStream(
       {requestStreamController = Stream<CreateUserState>}) async {
     Stream<ApplicationUser> userToCreateStream =
         requestStreamController.asyncMap<ApplicationUser>((CreateUserState e) {
@@ -61,23 +158,47 @@ class CreateUserController {
     List<ApplicationUser> createdUsers =
         await _userService.bulkLoadCreateUsersClientStream(
             usersStreamController: userToCreateStream);
-    List<CreatedUsersResponse> response = List.empty(growable: true);
+    List<UsersResponse> response = List.empty(growable: true);
     for (ApplicationUser u in createdUsers) {
-      response.add(CreatedUsersResponse(u.id, u.username));
+      response.add(UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode));
     }
     return response;
   }
 
-  Stream<CreatedUsersResponse> createUsersBidirectionalStream(
+  Stream<UsersResponse> createUsersBidirectionalStream(
       {requestStreamController = Stream<CreateUserState>}) async* {
     Stream<ApplicationUser> userToCreateStream =
         requestStreamController.asyncMap<ApplicationUser>((CreateUserState e) {
       return e.toUser();
     });
-    await for (ApplicationUser createdUser
+    await for (ApplicationUser u
         in _userService.bulkLoadCreateUsersBidirectionalStream(
             usersStreamController: userToCreateStream)) {
-      yield CreatedUsersResponse(createdUser.id, createdUser.username);
+      yield UsersResponse(
+          u.id,
+          u.username,
+          u.firstName,
+          u.lastName,
+          u.email,
+          u.phone,
+          u.birthDate,
+          u.country,
+          u.city,
+          u.state,
+          u.address,
+          u.postalCode);
     }
   }
 }

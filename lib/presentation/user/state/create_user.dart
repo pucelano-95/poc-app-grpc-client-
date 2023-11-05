@@ -3,6 +3,7 @@ import 'package:flutter_grpc_poc/domain/user.dart';
 class CreateUserState {
   CreateUserState();
 
+  int? id;
   String? username;
   String? firstName;
   String? lastName;
@@ -17,6 +18,7 @@ class CreateUserState {
 
   ApplicationUser toUser() {
     return ApplicationUser(
+      id: id ?? -1,
       username: username ?? "",
       firstName: firstName ?? "",
       lastName: lastName ?? "",
@@ -46,13 +48,85 @@ class CreateUserState {
     size += (postalCode != null) ? (postalCode!.length * 2) : 0;
     return size;
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
+      'username': username,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'phone': phone,
+      'birthDate': birthDate?.toIso8601String(),
+      'country': country,
+      'city': city,
+      'state': state,
+      'address': address,
+      'postalCode': postalCode,
+    };
+    data.removeWhere((key, value) => value == null);
+    return data;
+  }
 }
 
-class CreatedUsersResponse {
-  CreatedUsersResponse(this.id, this.username);
-  factory CreatedUsersResponse.fromJson(Map<String, dynamic> json) {
-    return CreatedUsersResponse(json['id'], json['username']);
+class UsersResponse {
+  UsersResponse(
+      this.id,
+      this.username,
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.phone,
+      this.birthDate,
+      this.country,
+      this.city,
+      this.state,
+      this.address,
+      this.postalCode);
+  factory UsersResponse.fromJson(Map<String, dynamic> json) {
+    return UsersResponse(
+        json['id'],
+        json['username'],
+        json['firstName'],
+        json['lastName'],
+        json['email'],
+        json['phone'],
+        DateTime.parse(json['birthDate']),
+        json['country'],
+        json['city'],
+        json['state'],
+        json['address'],
+        json['postalCode']);
   }
+
   int? id;
   String? username;
+  String? firstName;
+  String? lastName;
+  String? email;
+  String? phone;
+  DateTime? birthDate;
+  String? country;
+  String? city;
+  String? state;
+  String? address;
+  String? postalCode;
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
+      'id': id,
+      'username': username,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'phone': phone,
+      'birthDate': birthDate?.toIso8601String(),
+      'country': country,
+      'city': city,
+      'state': state,
+      'address': address,
+      'postalCode': postalCode,
+    };
+    data.removeWhere((key, value) => value == null);
+    return data;
+  }
 }
