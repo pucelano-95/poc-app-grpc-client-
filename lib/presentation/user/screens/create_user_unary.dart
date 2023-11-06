@@ -203,6 +203,7 @@ class _CreateUserUnaryState extends State<CreateUserUnaryScreen> {
                 _sizeOfDataSent = 0;
                 for (int i = 1; i <= 5; i++) {
                   var rng = Random();
+                  _state = CreateUserState();
                   _state.username = "someUsername${rng.nextInt(10000)}";
                   _state.firstName = "firstName${rng.nextInt(10000)}";
                   _state.lastName = "lastName${rng.nextInt(10000)}";

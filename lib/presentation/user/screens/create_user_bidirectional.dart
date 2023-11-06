@@ -172,7 +172,7 @@ class _CreateUserBidirectionalStreamState
     _createUserStreamController = StreamController<CreateUserState>();
     await for (var u in widget._controller.createUsersBidirectionalStream(
         requestStreamController: _createUserStreamController.stream)) {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
       setState(() {
         stateManagerSavedUsers.refRows.add(PlutoRow.fromJson(u.toJson()));
         _savedUsers.add(PlutoRow.fromJson(u.toJson()));
