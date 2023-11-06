@@ -17,18 +17,9 @@ class UserService {
     return _userApiRepository.bulkLoadCreateUserRest(users: users);
   }
 
-  Future<List<ApplicationUser>> getAllUsersUnary(
-      {users = List<ApplicationUser>}) {
-    return _userApiRepository.getAllUsersUnary();
-  }
-
   Future<List<ApplicationUser>> bulkLoadCreateUsersUnary(
       {users = List<ApplicationUser>}) {
     return _userApiRepository.bulkLoadCreateUserUnary(users: users);
-  }
-
-  Stream<ApplicationUser> getAllUsersServerStream() {
-    return _userApiRepository.getAllUsersServerStream();
   }
 
   Stream<ApplicationUser> bulkLoadCreateUsersServerStream(

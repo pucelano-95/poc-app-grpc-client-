@@ -113,28 +113,6 @@ class UserApiRepository {
     return createdUsers;
   }
 
-  Future<List<ApplicationUser>> getAllUsersUnary() async {
-    var response = await _userServiceClient.getAllUsers(EmptyRequest());
-    List<ApplicationUser> createdUsers = List.empty(growable: true);
-    for (CreatedUser user in response.createdUsers) {
-      createdUsers.add(ApplicationUser(
-          id: user.id.toInt(),
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phone: user.phone,
-          birthDate: DateTime.fromMillisecondsSinceEpoch(
-              user.birthDate.nanos ~/ 1000000),
-          country: user.country,
-          city: user.city,
-          state: user.state,
-          address: user.address,
-          postalCode: user.postalCode));
-    }
-    return createdUsers;
-  }
-
   Future<List<ApplicationUser>> bulkLoadCreateUserUnary(
       {users = List<ApplicationUser>}) async {
     List<User> bulkLoadUsers = List.empty(growable: true);
@@ -215,27 +193,6 @@ class UserApiRepository {
           postalCode: user.postalCode));
     }
     return createdUsers;
-  }
-
-  Stream<ApplicationUser> getAllUsersServerStream() async* {
-    await for (var createdUser
-        in _userServiceClient.getAllUsersServerStream(EmptyRequest())) {
-      ApplicationUser u = ApplicationUser(
-          id: createdUser.id.toInt(),
-          username: createdUser.username,
-          firstName: createdUser.firstName,
-          lastName: createdUser.lastName,
-          email: createdUser.email,
-          phone: createdUser.phone,
-          birthDate: DateTime.fromMillisecondsSinceEpoch(
-              createdUser.birthDate.nanos ~/ 1000000),
-          country: createdUser.country,
-          city: createdUser.city,
-          state: createdUser.state,
-          address: createdUser.address,
-          postalCode: createdUser.postalCode);
-      yield u;
-    }
   }
 
   Stream<ApplicationUser> bulkLoadCreateUserServerStream({
